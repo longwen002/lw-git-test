@@ -1,0 +1,22 @@
+bootdelay=0
+verify=n
+baudrate=115200
+ipaddr=192.168.1.10
+serverip=192.168.1.1
+netmask=255.255.255.0
+bootfile="uImage"
+phy_intf=mii,rgmii
+use_mdio=0,1
+phy_addr=2,1
+gmac_debug=0
+bootcmd=mmc read 0 0x801FBD0 0x60000 0xA000;mmc read 0 0x1FFBFC0 0x38000 0x10000;bootm 0x1FFBFC0
+bootargs=androidboot.hardware=bigfish androidboot.selinux=permissive androidboot.serialno=0123456789 console=ttyAMA0,115200 blkdevparts=mmcblk0:1M(fastboot),512K(bootargs),512K(bootargsbak),20M(recovery),2M(deviceinfo),8M(securestore),2M(atf),8M(baseparam),8M(pqparam),2M(dtbo),10M(logo),10M(logobak),20M(fastplay),20M(recoverybak),60M(boot),20M(misc),20M(trustedcore),1700M(system)ro,796M(cache),400M(vendor)ro,-(userdata) hbcomp=/dev/block/mmcblk0p18 init=/init root=/dev/mmcblk0p18 androidboot.dtbo_idx=0 pq=noacmuhd
+recoverybootargs=androidboot.hardware=bigfish androidboot.selinux=permissive androidboot.serialno=0123456789 console=ttyAMA0,115200 blkdevparts=mmcblk0:1M(fastboot),512K(bootargs),512K(bootargsbak),20M(recovery),2M(deviceinfo),8M(securestore),2M(atf),8M(baseparam),8M(pqparam),2M(dtbo),10M(logo),10M(logobak),20M(fastplay),20M(recoverybak),60M(boot),20M(misc),20M(trustedcore),1700M(system),796M(cache),400M(vendor),-(userdata) hbcomp=/dev/block/mmcblk0p18 init=/init root=/dev/mmcblk0p18 androidboot.dtbo_idx=0 pq=noacmuhd
+bootargs_512M=mem=512M mmz=ddr,0,0,32M vmalloc=500M
+bootargs_768M=mem=768M mmz=ddr,0,0,32M vmalloc=500M
+bootargs_1G=mem=1G mmz=ddr,0,0,52M vmalloc=500M
+bootargs_2G=mem=2G mmz=ddr,0,0,52M vmalloc=500M
+bootargs_3840M=mem=3840M mmz=ddr,0,0,48M vmalloc=500M
+stdin=serial
+stdout=serial
+stderr=serial

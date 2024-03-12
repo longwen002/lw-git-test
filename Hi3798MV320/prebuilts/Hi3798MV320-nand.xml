@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="GB2312" ?>
+<Partition_Info>
+<Part Sel="1" PartitionName="fastboot" FlashType="nand" FileSystem="none" Start="0" Length="8M" SelectFile="fastboot.bin"/>
+<Part Sel="1" PartitionName="bootargs" FlashType="nand" FileSystem="none" Start="8M" Length="8M" SelectFile="bootargs.bin"/>
+<Part Sel="1" PartitionName="recovery" FlashType="nand" FileSystem="none" Start="16M" Length="20M" SelectFile=""/>
+<Part Sel="0" PartitionName="deviceinfo" FlashType="nand" FileSystem="none" Start="36M" Length="8M" SelectFile=""/>
+<Part Sel="1" PartitionName="atf" FlashType="nand" FileSystem="none" Start="44M" Length="2M" SelectFile="bl31.bin"/>
+<Part Sel="1" PartitionName="baseparam" FlashType="nand" FileSystem="none" Start="46M" Length="8M" SelectFile="baseparam.img"/>
+<Part Sel="0" PartitionName="pqparam" FlashType="nand" FileSystem="none" Start="54M" Length="8M" SelectFile="pq_param.bin"/>
+<Part Sel="1" PartitionName="logo" FlashType="nand" FileSystem="none" Start="62M" Length="20M" SelectFile="logo.img"/>
+<Part Sel="0" PartitionName="logobak" FlashType="nand" FileSystem="none" Start="82M" Length="20M" SelectFile="logo.img"/>
+<Part Sel="1" PartitionName="fastplay" FlashType="nand" FileSystem="none" Start="102M" Length="40M" SelectFile="fastplay.img"/>
+<Part Sel="0" PartitionName="fastplaybak" FlashType="nand" FileSystem="none" Start="142M" Length="40M" SelectFile="fastplay.img"/>
+<Part Sel="1" PartitionName="kernel" FlashType="nand" FileSystem="none" Start="182M" Length="40M" SelectFile="kernel.img"/>
+<Part Sel="0" PartitionName="misc" FlashType="nand" FileSystem="none" Start="222M" Length="20M" SelectFile=""/>
+<Part Sel="1" PartitionName="trustedcore" FlashType="nand" FileSystem="none" Start="242M" Length="40M" SelectFile=""/>
+<Part Sel="1" PartitionName="system" FlashType="nand" FileSystem="ubifs" Start="282M" Length="1536M" SelectFile="system_16k_4M.ubi"/>
+<Part Sel="1" PartitionName="cache" FlashType="nand" FileSystem="ubifs" Start="1818M" Length="1024M" SelectFile="cache_16k_4M.ubi"/>
+<Part Sel="1" PartitionName="private" FlashType="nand" FileSystem="ubifs" Start="2842M" Length="50M" SelectFile=""/>
+<Part Sel="1" PartitionName="securestore" FlashType="nand" FileSystem="ubifs" Start="2892M" Length="8M" SelectFile=""/>
+<Part Sel="1" PartitionName="userdata" FlashType="nand" FileSystem="ubifs" Start="2900M" Length="-" SelectFile="userdata_16k_4M.ubi"/>
+</Partition_Info>

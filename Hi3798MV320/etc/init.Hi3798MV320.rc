@@ -1,0 +1,386 @@
+on early-init
+# copy from goldfish
+    #export EXTERNAL_STORAGE /mnt/sdcard
+    #mkdir /mnt/sdcard 0000 system system
+    #mkdir /mnt/smb 0777 system system
+    # for backwards compatibility
+    #symlink /mnt/sdcard /sdcard
+    write /proc/sys/vm/min_free_kbytes 10240
+
+on post-fs-data
+#create directory for dhcp
+    mkdir /data/misc/dhcp 0770 dhcp dhcp
+    chmod 0770 /data/misc/dhcp
+    mkdir /data/ppp 0770 radio radio
+    chmod 0770 /data/ppp
+    mkdir /data/btmic 0777 system system
+    chmod 0777 /data/btmic
+
+on boot
+# start essential services
+    start bigfish-setup
+    start ir_user
+
+#set tcp window size
+
+    setprop net.tcp.buffersize.default 4096,87380,110208,4096,16384,110208
+    setprop net.tcp.buffersize.wifi 524288,1048576,2097152,262144,524288,1048576
+    setprop net.tcp.buffersize.lte 524288,1048576,2097152,262144,524288,1048576
+    setprop net.tcp.buffersize.umts 4094,87380,110208,4096,16384,110208
+    setprop net.tcp.buffersize.hspa 4094,87380,262144,4096,16384,262144
+    setprop net.tcp.buffersize.hsupa 4094,87380,262144,4096,16384,262144
+    setprop net.tcp.buffersize.hsdpa 4094,87380,262144,4096,16384,262144
+    setprop net.tcp.buffersize.hspap 4094,87380,1220608,4096,16384,1220608
+    setprop net.tcp.buffersize.edge 4093,26280,35040,4096,16384,35040
+    setprop net.tcp.buffersize.gprs 4092,8760,11680,4096,8760,11680
+    setprop net.tcp.buffersize.evdo 4094,87380,262144,4096,16384,262144
+
+# bluetooth
+    # UART device(AP6xxx)
+    chmod 777 /dev/ttyAMA1
+    chmod 777 /sys/class/rfkill/rfkill0/state
+
+    # change back to bluetooth from system
+    mkdir /data/misc/bluedroid 0770 bluetooth net_bt_stack
+    chown bluetooth net_bt_stack /data/misc/bluetooth
+
+    # bluetooth MAC address programming
+    chown bluetooth net_bt_stack ro.bt.bdaddr_path
+    chown bluetooth net_bt_stack /system/etc/bluetooth
+    chown bluetooth net_bt_stack /data/misc/bluetooth
+    setprop ro.bt.bdaddr_path "/data/misc/bluetooth/bdaddr"
+
+# set QualComm UART Bluetooth prop
+   setprop qcom.bluetooth.soc rome
+   getprop qcom.bluetooth.soc
+#NFC
+   insmod /system/lib/modules/pn5xx_i2c.ko
+   insmod /system/lib/modules/ntag_i2c.ko
+   setprop ro.nfc.port "I2C"
+   chmod 0777 /dev/pn544
+   chown nfc nfc /dev/pn544
+
+on property:wc_transport.start_hci=true
+          start start_hci_filter
+
+on property:wc_transport.start_hci=false
+           stop start_hci_filter
+ #QualComm UART Bluetooth end
+
+on property:sys.boot_completed=1
+    start exitfastplay
+
+service exitfastplay /system/bin/sh /system/etc/exitfastplay
+    user root
+    group root
+    disabled
+    oneshot
+
+# for BT PAN
+service dhcpcd_bt-pan /system/bin/dhcpcd -ABKL
+    class main
+    disabled
+    oneshot
+service iprenew_bt-pan /system/bin/dhcpcd -n
+    class main
+    disabled
+    oneshot
+service bigfish-setup /system/etc/init.bigfish.sh
+    user root
+    group root
+    oneshot
+
+service ir_user /system/bin/android_ir_user
+    user root
+    group root
+
+service frontPanel /system/bin/frontPanel
+    class main
+    user root
+    group root
+
+service dhcpcd_eth0 /system/bin/dhcpcd -aABDKL -f /system/etc/dhcpcd/dhcpcd.conf
+    class main
+    disabled
+    oneshot
+
+# start blueangel deamon
+service blueangel /system/bin/mtkbt
+    class main
+    socket bt.int.adp dgram 660 bluetooth net_bt
+    socket bt.a2dp.stream dgram 660 bluetooth net_bt
+    user bluetooth
+    group  system  net_bt  bluetooth  net_bt_admin  inet  net_admin  net_raw  vpn  net_bt_stack
+    sdcard_r
+    oneshot
+
+service iprenew_eth0 /system/bin/dhcpcd -n
+    class main
+    disabled
+    oneshot
+
+service dhcpcd_eth1 /system/bin/dhcpcd -aABDKL -f /system/etc/dhcpcd/dhcpcd.conf
+    class main
+    disabled
+    oneshot
+
+service iprenew_eth1 /system/bin/dhcpcd -n
+    class main
+    disabled
+    oneshot
+
+service dhcpcd_vlan /system/bin/dhcpcd -aABDKL -f /system/etc/dhcpcd/dhcpcd.conf
+    class main
+    disabled
+    oneshot
+
+service iprenew_vlan /system/bin/dhcpcd -n
+    class main
+    disabled
+    oneshot
+
+service ipconflict_eth0 /system/bin/ipconflict
+    class main
+    disabled
+    oneshot
+
+service ipconflict_eth1 /system/bin/ipconflict
+    class main
+    disabled
+    oneshot
+
+service ipconflict_wlan0 /system/bin/ipconflict
+    class main
+    disabled
+    oneshot
+#pppoe
+service pppoe_conn_eth0 /system/etc/ppp/ppp.connect
+    class main
+    disabled
+    oneshot
+service pppoe_conn_eth1 /system/etc/ppp/ppp.connect
+    class main
+    disabled
+    oneshot
+service pppoe_conn_wlan0 /system/etc/ppp/ppp.connect
+    class main
+    disabled
+    oneshot
+service pppoe_conn_vlan /system/etc/ppp/ppp.connect
+    class main
+    disabled
+    oneshot
+service pppoe_disconn /system/etc/ppp/ppp.disconnect
+    class main
+    disabled
+    oneshot
+
+#doublevlan
+service vlan_start /system/etc/vlan/vlan.start
+    class main
+    disabled
+    oneshot
+service vlan_stop /system/etc/vlan/vlan.stop
+    class main
+    disabled
+    oneshot
+
+##ipv6 start
+service dhclient_eth0 /system/bin/dhclient -6 -nw -d eth0
+    group system dhcp wifi
+    disabled
+    oneshot
+
+service dhclient_eth1 /system/bin/dhclient -6 -nw -d eth1
+    group system dhcp wifi
+    disabled
+    oneshot
+
+service dhclient_wlan0 /system/bin/dhclient -6 -nw -d wlan0
+    group system dhcp wifi
+    disabled
+    oneshot
+
+service release_eth0 /system/bin/dhclient -6 -r eth0
+    group system dhcp wifi
+    disabled
+    oneshot
+
+service release_eth1 /system/bin/dhclient -6 -r eth1
+    group system dhcp wifi
+    disabled
+    oneshot
+
+service release_wlan0 /system/bin/dhclient -6 -r wlan0
+    group system dhcp wifi
+    disabled
+    oneshot
+
+//add for get dns
+service dhclientDns_eth0 /system/bin/dhclient -6 -S eth0
+    group system dhcp wifi
+    disabled
+    oneshot
+
+##ipv6 end
+
+#add wpa_supplicant service for wifi
+service wpa_supplicant /system/bin/wpa_supplicant -Dnl80211 -iwlan0 -c/data/misc/wifi/wpa_supplicant.conf \
+    -O/data/misc/wifi/sockets -g@android:wpa_wlan0
+    class main
+    socket wpa_wlan0 dgram 0660 wifi wifi
+    disabled
+    oneshot
+
+#add wpa_supplicant service for wifi with wext
+service wext_supplicant /system/bin/wpa_supplicant -Dwext -iwlan0 -c/data/misc/wifi/wpa_supplicant.conf \
+        -O/data/misc/wifi/sockets -g@android:wpa_wlan0
+    class main
+    socket wpa_wlan0 dgram 0660 wifi wifi
+    disabled
+    oneshot
+
+#add p2p_supplicant service for wifi direct
+service p2p_supplicant /system/bin/wpa_supplicant \
+    -ip2p0 -Dnl80211 -c /data/misc/wifi/p2p_supplicant.conf \
+    -e/data/misc/wifi/entropy.bin -puse_p2p_group_interface=0 -N \
+    -iwlan0 -Dnl80211 -c/data/misc/wifi/wpa_supplicant.conf \
+    -O/data/misc/wifi/sockets \
+    -g@android:wpa_wlan0
+    class main
+    socket wpa_wlan0 dgram 660 wifi wifi
+    disabled
+    oneshot
+
+#add mtk_supplicant service for MTK wifi direct
+service mtk_supplicant /system/bin/wpa_supplicant \
+    -iwlan0 -Dnl80211 -c/data/misc/wifi/wpa_supplicant.conf -O/data/misc/wifi/sockets -N \
+    -ip2p0 -Dnl80211 -c /data/misc/wifi/p2p_supplicant.conf \
+    -e/data/misc/wifi/entropy.bin -puse_p2p_group_interface=1 -g@android:wpa_wlan0
+    class main
+    socket wpa_wlan0 dgram 660 wifi wifi
+    disabled
+    oneshot
+
+service bcm_supplicant /system/bin/wpa_supplicant \
+    -iwlan0 -Dnl80211 -c/data/misc/wifi/wpa_supplicant.conf \
+    -O/data/misc/wifi/sockets \
+    -e/data/misc/wifi/entropy.bin -g@android:wpa_wlan0 \
+    -puse_p2p_group_interface=1p2p_device=1
+    class main
+    socket wpa_wlan0 dgram 660 wifi wifi
+    disabled
+    oneshot
+
+#add 76x2_supplicant service for MTK wifi MT7632U
+service 76x2_supplicant /system/bin/76x2_supplicant \
+    -iwlan0 -Dnl80211 -c/data/misc/wifi/wpa_supplicant.conf -O/data/misc/wifi/sockets -N \
+    -ip2p0 -Dnl80211 -c/data/misc/wifi/p2p_supplicant.conf \
+    -e/data/misc/wifi/entropy.bin -puse_p2p_group_interface=1 -g@android:wpa_wlan0
+    class main
+    socket wpa_wlan0 dgram 660 wifi wifi
+    disabled
+    oneshot
+
+#add dhcpcd service
+service dhcpcd_wlan0 /system/bin/dhcpcd -aABDKL
+    class main
+    disabled
+    oneshot
+
+service dhcpcd_p2p /system/bin/dhcpcd -aABDKL
+    class main
+    disabled
+    oneshot
+
+#add dhcpcd-iprenew service
+service iprenew_wlan0 /system/bin/dhcpcd -n
+    class main
+    disabled
+    oneshot
+
+service iprenew_p2p /system/bin/dhcpcd -n
+    class main
+    disabled
+    oneshot
+
+# add hiaoservice
+service hiaoservice /system/bin/hiaoservice
+    class main
+    user  root
+    group root
+
+service netshared /system/bin/netshared
+    class main
+    user  root
+    group root
+
+
+# add hisysmanager
+service hisysmanager /system/bin/hisysmanager
+    class main
+    user  root
+    group root
+
+# add hikaraokeservice
+service hikaraokeservice /system/bin/hikaraokeservice
+    class main
+    user  root
+    group root
+
+#add display service
+service display /system/bin/displaysetting
+     class main
+     user  root
+     group root
+
+service hipq /system/bin/pqsetting
+     class main
+     user  root
+     group root
+
+service dtvserver /system/bin/dtvserver
+    class main
+    user system
+    group system inet net_bt net_bt_admin net_bw_acct
+    ioprio rt 4
+
+on property:sys.insmod.ko=1
+    insmod /system/lib/modules/ehci-platform.ko
+    insmod /system/lib/modules/ohci-platform.ko
+    insmod /system/lib/modules/xhci-plat-hcd.ko
+    insmod /system/lib/modules/tntfs_hi.ko
+    insmod /system/lib/modules/libahci.ko
+    insmod /system/lib/modules/libahci_platform.ko
+    insmod /system/lib/modules/ahci_platform.ko
+
+service bt_init /system/etc/init.bt.sh
+    user  root
+    group root
+    oneshot
+
+on property:ro.bt_init.enable=true
+   start bt_init
+
+on property:ro.bt_init.enable=false
+    insmod /system/lib/modules/hi_sdio_detect.ko
+    insmod /system/lib/modules/hi_rfkill.ko
+    insmod /system/lib/modules/rtk_btusb.ko
+    //insmod /system/lib/modules/btmtk_usb.ko
+    insmod /system/lib/modules/btmtk_sdio.ko
+    insmod /system/lib/modules/rfkill-hi-bt.ko
+    chmod 777 /sys/class/rfkill/rfkill0/state
+    chown bluetooth net_bt_stack /sys/class/rfkill/rfkill1/state
+    chmod 777 /sys/class/rfkill/rfkill0/type
+    chown bluetooth net_bt_stack /sys/class/rfkill/rfkill1/type
+
+service gpio-led /system/bin/gpio-led
+    class main
+    oneshot
+
+service android_wdg /system/bin/android_wdg 5000
+    user  root
+    group root
+
+on property:ro.wdg.enable=true
+   start android_wdg

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array translatable="false" name="supported_locales">
+        <item>en-US</item> <!-- English (United States) -->
+        <item>zh-Hans-CN</item> <!-- Chinese (Simplified Han,China) -->
+    </string-array>
+</resources>

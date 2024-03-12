@@ -1,0 +1,44 @@
+#!/system/bin/sh
+busybox date -s 201501010000.00
+
+HIETHENABLE=`getprop persist.sys.doublenet`
+case $HIETHENABLE in
+ true)
+  ip link add link eth0 eth1 type macvlan
+  ;;
+ esac
+
+# OptimizedNetwork
+test -f /system/bin/hioptimizednetwork && /system/bin/hioptimizednetwork
+
+QBENABLE=`getprop persist.sys.qb.enable`
+case $QBENABLE in
+ true)
+  ;;
+ *)
+  setprop sys.insmod.ko 1
+  ;;
+ esac
+
+
+echo "\n\nWelcome to HiAndroid\n\n" > /dev/kmsg
+LOW_RAM=`getprop ro.config.low_ram`
+case $LOW_RAM in
+ true)
+  echo "\n\nenter low_ram mode\n\n" > /dev/kmsg
+  #modules(memopt): Enable KSM in low ram device
+  echo 1 > /sys/kernel/mm/ksm/run
+  echo 300 > /sys/kernel/mm/ksm/sleep_millisecs
+  ;;
+ *)
+  ;;
+ esac
+
+# active zram as swap zone, and set zramsize = 100M
+echo 104857600 > /sys/block/zram0/disksize
+mkswap /dev/block/zram0
+swapon /dev/block/zram0
+
+#syslog
+logcat -v threadtime -r2048 -n1 -f /tmp/capture/logcat.txt &
+

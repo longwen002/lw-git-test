@@ -1,0 +1,31 @@
+# prop insystem.img
+ro.config.build.name=Hivendor
+# prop for nts
+vendor.display-size=3840x2160
+#StrictMode remove red edge
+persist.sys.strictmode.disable=true
+
+# prop sdcardfs force_on in system.img
+persist.sys.sdcardfs=force_on
+
+# Ethernet switch status: eth0_on eth0_down
+# 1.We should use system_prop in frameworks/opt/net
+# 2.Dongle's usb2eth is eth0 in REG dme.
+persist.sys.ethernet.status=eth0_on
+
+# Property name for the local device configurations.
+persist.sys.hdmi.addr.playback = 4
+
+# prop for cmcc log service
+persist.prop.logcat.enable=false
+
+#need to set ro.crypto.state for start app_process fast
+ro.crypto.state=unsupported
+
+vold.debug.default_primary=false
+persist.sys.timezone=Asia/Shanghai
+ro.config.media_vol_default=7
+ro.sys.apkcontrol.mode=none
+
+# add release version
+gsm.version.baseband=HiSTBAndroid_Version

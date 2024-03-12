@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- /*
+** Copyright 2012, The Android Open Source Project
+**
+** Licensed under the Apache License, Version 2.0 (the "License");
+** you may not use this file except in compliance with the License.
+** You may obtain a copy of the License at
+**
+**     http://www.apache.org/licenses/LICENSE-2.0
+**
+** Unless required by applicable law or agreed to in writing, software
+** distributed under the License is distributed on an "AS IS" BASIS,
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+** See the License for the specific language governing permissions and
+** limitations under the License.
+*/
+-->
+<!--  These resources are around just to allow their values to be customized
+     for different hardware and product builds.
+  -->
+
+<resources>
+    <string-array translatable="false" name="networkAttributes">
+        <item>"ethernet,9,9,1,-1,true"</item>
+        <item>"wifi,1,1,1,-1,true"</item>
+        <item>"wifi_p2p,13,1,0,-1,true"</item>
+    </string-array>
+    <string-array translatable="false" name="config_tether_wifi_regexs">
+        <item>wlan0</item>
+    </string-array>
+	<integer name="config_longPressOnHomeBehavior">1</integer>
+
+    <!-- A list of potential packages, in priority order, that may contain an
+     ephemeral resolver. Each package will be be queried for a component
+     that has been granted the PACKAGE_EPHEMERAL_AGENT permission.
+     This may be empty if ephemeral apps are not supported. -->
+    <string-array name="config_ephemeralResolverPackage" translatable="false">
+        <!-- Add packages here -->
+        <item>com.google.android.gms</item>
+    </string-array>
+    <dimen name="config_minScrollbarTouchTarget">20dp</dimen>
+
+    <!-- Normal polling frequency in milliseconds -->
+    <integer name="config_ntpPollingInterval">5000</integer>
+
+    <bool name="config_supportsSplitScreenMultiWindow">false</bool>
+    <!-- Control the behavior when the user long presses the power button.
+            0 - Nothing
+            1 - Global actions menu
+            2 - Power off (with confirmation)
+            3 - Power off (without confirmation)
+            4 - Go to voice assist
+            5 - Show dialog
+    -->
+    <integer name="config_longPressOnPowerBehavior">1</integer>
+
+    <!-- IPV6 address of the dns 1 server to use if nobody else suggests one -->
+    <string name="config_default_dns1_server_v6" translatable="false">2001:4860:4860::8888</string>
+
+    <!-- IPV6 address of the dns 2 server to use if nobody else suggests one -->
+    <string name="config_default_dns2_server_v6" translatable="false">2001:4860:4860::8844</string>
+    <bool translatable="false" name="config_wifi_framework_enable_associated_network_selection">false</bool>
+</resources>

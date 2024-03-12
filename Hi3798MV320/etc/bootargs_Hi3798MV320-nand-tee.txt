@@ -1,0 +1,21 @@
+bootdelay=0
+verify=n
+baudrate=115200
+ipaddr=192.168.1.10
+serverip=192.168.1.1
+netmask=255.255.255.0
+bootfile="uImage"
+phy_intf=mii,rgmii
+use_mdio=0,1
+phy_addr=2,1
+gmac_debug=0
+bootcmd=nand read 0x1FFBFC0 0xB400000 0x1900000;bootm 0x1FFBFC0
+bootargs=androidboot.selinux=enforcing console=ttyAMA0,115200 mtdparts=hinand:8M(fastboot),8M(bootargs),20M(recovery),8M(deviceinfo),8M(baseparam),8M(pqparam),20M(logo),20M(logobak),40M(fastplay),40M(fastplaybak),40M(kernel),20M(misc),40M(trustedcore),1536M(system),1024M(cache),50M(private),8M(securestore),-(userdata) ubi.mtd=system ubi.mtd=cache ubi.mtd=private ubi.mtd=securestore ubi.mtd=userdata
+bootargs_512M=mem=512M mmz=ddr,0,0,32M vmalloc=500M
+bootargs_768M=mem=768M mmz=ddr,0,0,32M vmalloc=500M
+bootargs_1G=mem=1G mmz=ddr,0,0,52M vmalloc=500M
+bootargs_2G=mem=2G mmz=ddr,0,0,52M vmalloc=500M
+bootargs_3840M=mem=3840M mmz=ddr,0,0,48M vmalloc=500M
+stdin=serial
+stdout=serial
+stderr=serial

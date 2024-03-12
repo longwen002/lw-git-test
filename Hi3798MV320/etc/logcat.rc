@@ -1,0 +1,14 @@
+on post-fs-data
+    mkdir /tmp/playInfoLog 0666 system system
+    mkdir /tmp/capture 0666 system system
+
+on property:persist.prop.logcat.enable=true
+    start logcat_service
+
+on property:persist.prop.logcat.enable=false
+    stop logcat_service
+
+service logcat_service /system/bin/logcat -n 1 -v threadtime -r 1024 -f /tmp/capture/logcat.txt
+    user root
+    group root log
+    seclabel u:r:shell:s0
